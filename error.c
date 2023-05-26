@@ -1,37 +1,82 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * error_msg - it writes the error message
- * @args: command to be executed
- * Return: nothing
+ *_eputs - prints an input string
+ * @str: the string
+ *
+ * Return: Nothing
  */
-
-void error_msg(char **args)
+void _eputs(char *str)
 {
-	int loop = 1;
-	char *hsh_home = "";
-	char *looper = NULL;
-	char *error_message = malloc(sizeof(char) * 255);
+	int i = 0;
 
-	looper = int_to_charac(loop);
-	error_message = strduplicate(hsh_home);
-	error_message = strconk(error_message, ": ");
-	error_message = strconk(error_message, ": ");
-	error_message = strconk(error_message, args[0]);
-	error_message = strconk(error_message, looper);
-	perror(error_message);
-	free(error_message);
+	if (!str)
+		return;
+	while (str[i] != '\0')
+	{
+		_eputchar(str[i]);
+		i++;
+	}
 }
 
 /**
- * error_badcommand - error deppends on error num
- * Return: nothing
+ * _eputchar - writes the character c to stderr
+ * @c: character
+ * Return: On success 1.
+ * On error, -1.
  */
-void error_badcommand(char **args, char *buffer)
+int _eputchar(char c)
 {
-	write(STDOUT_FILENO, "command not found\n", 18);
-	freedom(1, buffer);
-	buffer = NULL;
-	freedom(2, args);
-	args = NULL;
+	static int i;
+	static char buf[WRITE_BUF_SIZE];
+
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+	{
+		write(2, buf, i);
+		i = 0;
+	}
+	if (c != BUF_FLUSH)
+		buf[i++] = c;
+	return (1);
+}
+
+/**
+ * _putfd - writes the character c to given fd
+ *
+ * Return: On success 1.
+ * On error, -1 is returned.
+ */
+int _putfd(char c, int fd)
+{
+	static int a;
+	static char buf[WRITE_BUF_SIZE];
+
+	if (c == BUF_FLUSH || a >= WRITE_BUF_SIZE)
+	{
+		write(fd, buf, a);
+		a = 0;
+	}
+	if (c != BUF_FLUSH)
+		buf[a++] = c;
+	return (a);
+}
+
+/**
+ *_putsfd - prints an input string
+ * @str: string
+ * @fd: the filedescriptor
+ *
+ * Return: the number of chars put
+ */
+int _putsfd(char *str, int fd)
+{
+	int a = 0;
+
+	if (!str)
+		return (0);
+	while (*str)
+	{
+		a += _putfd(*str++, fd);
+	}
+	return (a);
 }
