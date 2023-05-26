@@ -6,7 +6,7 @@
  * @ac: arg count
  * Return: 0 on success, 1 on error
  */
-int main(int ac, char **av, int fd)
+int main(int ac, int fd, char **av,)
 {
 	info_t info[] = { INFO_INIT };
 	int fd = 2;
